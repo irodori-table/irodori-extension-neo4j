@@ -405,9 +405,18 @@ dependencies = [
 ]
 
 [[package]]
-name = "irodori-extension-neo4j"
-version = "0.1.0"
+name = "irodori-connector-abi"
+version = "0.6.0"
+source = "git+https://github.com/hjosugi/irodori-kit?tag=v0.6.0#9050f1b8bed78d8ca9efbd1a699730bce2f35ff3"
 dependencies = [
+ "serde_json",
+]
+
+[[package]]
+name = "irodori-extension-neo4j"
+version = "0.1.1"
+dependencies = [
+ "irodori-connector-abi",
  "neo4rs",
  "serde_json",
  "tokio",
