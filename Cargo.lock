@@ -414,7 +414,7 @@ dependencies = [
 
 [[package]]
 name = "irodori-extension-neo4j"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "irodori-connector-abi",
  "neo4rs",
