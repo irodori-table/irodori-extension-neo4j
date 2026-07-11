@@ -1,3 +1,6 @@
+<!-- i18n: language-switcher -->
+[English](README.md) | [日本語](README.ja.md)
+
 # Neo4j Connector
 
 Native Irodori Table connector extension for Neo4j.
