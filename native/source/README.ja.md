@@ -1,22 +1,18 @@
 <!-- i18n: language-switcher -->
 [English](README.md) | [日本語](README.ja.md)
 
-# Native Source
+# ネイティブソース
 
-The initial source snapshot was copied from `db/neo4j.rs` in the desktop app.
+初期のソーススナップショットは、デスクトップアプリの `db/neo4j.rs` からコピーされました。
 
-Source SHA-256: `ec1edf1dc6ae2cdb2b6b7c01054cf72ff50fe76dbca7a4c382fc4b3e9ee8fe2a`.
+ソースSHA-256: `ec1edf1dc6ae2cdb2b6b7c01054cf72ff50fe76dbca7a4c382fc4b3e9ee8fe2a`。
 
 
-This directory is a migration staging area for `irodori.neo4j`. The active native
-entrypoints live in `src/lib.rs`, shared ABI helpers live in `src/abi.rs`, and
-engine behavior lives in `src/stub.rs` or `src/driver.rs`. Engine-specific
-connect/query/metadata code should move from these snapshots into that behavior
-module as the connector runtime contract is wired into the desktop app.
+このディレクトリは `irodori.neo4j` のマイグレーションステージングエリアです。アクティブなネイティブのエントリポイントは `src/lib.rs` にあり、共有ABIヘルパーは `src/abi.rs` にあり、エンジンの動作は `src/stub.rs` または `src/driver.rs` にあります。エンジン固有の接続／クエリ／メタデータコードは、コネクターのランタイム契約がデスクトップアプリに組み込まれるにつれて、これらのスナップショットからその動作モジュールに移動するべきです。
 
-## Migration Snapshots
+## マイグレーションスナップショット
 
-| Kind | Source | Destination | SHA-256 |
+| 種類 | ソース | 宛先 | SHA-256 |
 |---|---|---|---|
 | `desktop-db-adapter` | `apps/desktop/src-tauri/src/db/neo4j.rs` | `native/source/irodori-table/apps/desktop/src-tauri/src/db/neo4j.rs` | `ec1edf1dc6ae2cdb2b6b7c01054cf72ff50fe76dbca7a4c382fc4b3e9ee8fe2a` |
 | `desktop-db-contract` | `apps/desktop/src-tauri/src/db/connection.rs` | `native/source/irodori-table/apps/desktop/src-tauri/src/db/connection.rs` | `54051346e0402f182d87e2f0e7692d8fc50a8cedd7e1ba4b02b2abfa1f514a47` |
@@ -33,4 +29,4 @@ module as the connector runtime contract is wired into the desktop app.
 | `transport-runtime` | `../irodori-kit/irodori-proxy/src/plan.rs` | `native/source/irodori-kit/irodori-proxy/src/plan.rs` | `b6e3be9778fd9b543d905dec39c0ddf579e739313e0bf24881f6152b6da94a39` |
 | `transport-runtime` | `../irodori-kit/irodori-proxy/src/resolved.rs` | `native/source/irodori-kit/irodori-proxy/src/resolved.rs` | `4b1ba3f95e49fd582dd82de39452d03a597abe36a8738772e6f4bdbab753772d` |
 
-Engine status from `knowledge/engines.json`: `wired`.
+`knowledge/engines.json` からのエンジンステータス: `wired`。
