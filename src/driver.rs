@@ -24,6 +24,8 @@ struct GraphConfig {
     password: String,
     database: String,
     redaction_values: Vec<String>,
+    /// Path to the client certificate, when the profile supplies one.
+    client_certificate: Option<String>,
 }
 
 type QueryRows = Vec<Vec<Value>>;
@@ -197,11 +199,24 @@ fn close(request: &Value) -> IrodoriConnectorBuffer {
 
 impl GraphConnection {
     async fn new(config: GraphConfig) -> Result<Self, String> {
-        let neo_config = ConfigBuilder::default()
+        let mut builder = ConfigBuilder::default()
             .uri(&config.uri)
             .user(&config.username)
             .password(&config.password)
-            .db(config.database.as_str())
+            .db(config.database.as_str());
+        // The certificate authenticating this client to the server, as
+        // `connector.config.json` declares under `clientCertificate`. A path,
+        // never key material: connector options persist in the clear.
+        if let Some(path) = config.client_certificate.as_deref() {
+            // neo4rs reads the file when it builds the config, and reports a
+            // missing one as a generic config failure. Check first so the error
+            // names the field and the path.
+            if !std::path::Path::new(path).exists() {
+                return Err(format!("SSL client certificate at {path} does not exist."));
+            }
+            builder = builder.with_client_certificate(path);
+        }
+        let neo_config = builder
             .build()
             .map_err(|err| format!("failed to build {ENGINE} config: {err}"))?;
         let graph = Graph::connect(neo_config)
@@ -235,6 +250,16 @@ impl GraphConfig {
                 "neo4j".into()
             }
         });
+        let client_certificate = option_string(
+            request,
+            &[
+                "sslCert",
+                "sslcert",
+                "ssl-cert",
+                "clientCert",
+                "clientCertificate",
+            ],
+        );
         let mut redaction_values = Vec::new();
         push_sensitive(&mut redaction_values, Some(&password));
         collect_url_auth(&uri, &mut redaction_values);
@@ -243,6 +268,7 @@ impl GraphConfig {
             username,
             password,
             database,
+            client_certificate,
             redaction_values,
         })
     }
@@ -558,5 +584,29 @@ mod tests {
         let metadata = property_metadata_object("neo4j", "Person", "nodeLabel", &columns, rows);
         assert_eq!(metadata["name"], "Person");
         assert_eq!(metadata["columns"][1]["name"], "age");
+    }
+
+    #[test]
+    fn reads_the_client_certificate_path_from_the_connector_options() {
+        for field in ["sslCert", "ssl-cert", "clientCert", "clientCertificate"] {
+            let config = GraphConfig::from_request(&json!({
+                "profile": { "host": "graph.local", "options": { field: "/etc/ssl/client.pem" } }
+            }))
+            .unwrap();
+            assert_eq!(
+                config.client_certificate.as_deref(),
+                Some("/etc/ssl/client.pem"),
+                "{field}"
+            );
+        }
+    }
+
+    #[test]
+    fn a_profile_without_a_certificate_carries_none() {
+        let config = GraphConfig::from_request(&json!({
+            "profile": { "host": "graph.local" }
+        }))
+        .unwrap();
+        assert_eq!(config.client_certificate, None);
     }
 }
