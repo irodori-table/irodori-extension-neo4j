@@ -3,7 +3,7 @@
   "manifestVersion": 1,
   "id": "irodori.neo4j",
   "name": "Neo4j Connector",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "publisher": "irodori",
   "description": "Neo4j Connector contributes the Neo4j database connector through the native connector ABI.",
   "license": "MIT OR 0BSD",
