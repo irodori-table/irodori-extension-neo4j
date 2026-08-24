@@ -275,16 +275,7 @@ impl GraphConfig {
     }
 
     fn redact(&self, message: &str) -> String {
-        self.redaction_values.iter().fold(
-            message.replace(&self.uri, "<graph-uri>"),
-            |message, secret| {
-                if secret.is_empty() {
-                    message
-                } else {
-                    message.replace(secret, "****")
-                }
-            },
-        )
+        abi::redact_endpoint(message, &self.uri, "<graph-uri>", &self.redaction_values)
     }
 }
 
